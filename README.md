@@ -11,6 +11,8 @@ There are three types of design patterns:
 Several structural design patterns are:
 1. Adapter
 2. Bridge
+3. Facade
+
 
 ### Adapter Design Pattern
 We have a game where hunters hunt lions.
@@ -62,7 +64,7 @@ class IDog
 }
 ```
 
-The problem is: IHunter interface just expects ILion. In this case, the adpter patter comes to play. We can make `DogAdapter` so that `IHunter` can hunt `IDog`.
+The problem is: IHunter interface just expects ILion. In this case, the adpter patter comes to play. We can make `DogAdapter` so that `IHunter` can hunt `Dog`.
 
 ```C#
 class DogAdapter : ILion
@@ -79,4 +81,86 @@ class DogAdapter : ILion
         _dog.Bark();
     }
 }
+```
+
+### Facade Design Pattern
+Facade class takes several libraries and execute necessary methods to achieve goal.
+![Facade Class Diagram](images/FacadeClassDiagram.png)
+
+There are several operations are made when we start and shut-down computers. We can make libraries for computer start and computer shutdown.
+
+```C#
+class ComputerStart
+{
+    public void GetElectricShock()
+    {
+        Console.Write("Ouch!");
+    }
+
+    public void MakeSound()
+    {
+        Console.Write("Beep Beep!");
+    }
+
+    public void ShowLoadingScreen()
+    {
+        Console.Write("Loading..!");
+    }
+
+    public void Bam()
+    {
+        Console.Write("Bam!");
+    }
+}
+
+class ComputerShutDown
+{
+    public void CloseEverything()
+    {
+        Console.Write("Bup bup bup buzzz!");
+    }
+
+    public void Sooth()
+    {
+        Console.Write("Zzzzz");
+    }
+}
+
+class ComputerStartShutDownFacade
+{
+    private readonly ComputerStart _computerStart;
+    private readonly ComputerShutDown _computerShutDown;
+
+    public ComputerStartShutDownFacade(ComputerStart computerStart,
+                                       ComputerShutDown computerShutDown)
+    {
+        _computerStart = computerStart;
+        _computerShutDown = computerShutDown;
+    }
+
+    public void TurnOn()
+    {
+        _computerStart.GetElectricShock();
+        _computerStart.MakeSound();
+        _computerStart.ShowLoadingScreen();
+        _computerStart.Bam();
+    }
+
+    public void TurnOff()
+    {
+        _computerShutDown.CloseEverything();
+        _computerShutDown.PullCurrent();
+        _computerShutDown.Sooth();
+    }
+}
+```
+
+Now to use the facade
+
+```C#
+var _omputerStartShutDownFacade = new ComputerStartShutDownFacade(new ComputerStart(), new ComputerShutDown());
+_omputerStartShutDownFacade.TurnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
+Console.WriteLine();
+_omputerStartShutDownFacade.TurnOff();  // Bup bup buzzz! Haah! Zzzzz
+Console.ReadLine();
 ```
