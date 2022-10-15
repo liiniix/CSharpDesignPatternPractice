@@ -158,9 +158,72 @@ class ComputerStartShutDownFacade
 Now to use the facade
 
 ```C#
-var _omputerStartShutDownFacade = new ComputerStartShutDownFacade(new ComputerStart(), new ComputerShutDown());
+var _omputerStartShutDownFacade = new ComputerStartShutDownFacade(new ComputerStart(),
+                                                                  new ComputerShutDown());
 _omputerStartShutDownFacade.TurnOn(); // Ouch! Beep beep! Loading.. Ready to be used!
 Console.WriteLine();
 _omputerStartShutDownFacade.TurnOff();  // Bup bup buzzz! Haah! Zzzzz
 Console.ReadLine();
+```
+
+## Behavioral Design Pattern
+
+Several behavioral dsign patterns are:
+1. Command
+2. Obseraver
+
+### Behavioral Design Pattern
+`Client` delegates `Command` to `Invoker`. `Invoker` then gives it to `Receiver`.
+
+```C#
+//Receiver
+public class Bulb
+{
+    public void TurnOn()
+    {
+        Console.WriteLine("Bulb has been lit");
+    }
+
+    public void TurnOff()
+    {
+        Console.WriteLine("Darkness");
+    }
+}
+
+//Command
+public interface ICommand
+{
+    void Execute();
+}
+
+public class TurnOn : ICommand
+{
+    void Execute() => Console.WriteLine("Light!");
+}
+
+public class TurnOff : ICommand
+{
+    void Execute() => Console.WriteLine("Darkness!");
+}
+
+//Invoker
+class RemoteControl
+{
+    public void Submit(ICommand command)
+    {
+        command.Execute();
+    }
+}
+```
+
+This is how we can use Command Design Pattern:
+```C#
+var bulb = new Bulb();
+
+var turnOn = new TurnOn(bulb);
+var turnOff = new TurnOff(bulb);
+
+var remoteControl = new RemoteControl();
+remoteControl.Submit(turnOn);
+remoteControl.Submit(turnOff);
 ```
